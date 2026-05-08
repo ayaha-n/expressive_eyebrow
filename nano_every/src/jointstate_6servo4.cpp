@@ -51,10 +51,13 @@ void jointStateCallback(const sensor_msgs::JointState &msg) {
 }
 
 
-ros::Subscriber<sensor_msgs::JointState> sub("joint_states", &jointStateCallback);
+ros::Subscriber<sensor_msgs::JointState> sub("eye_brow/joint_states", &jointStateCallback);
 // ros::Subscriber<sensor_msgs::JointState> sub("joint_states", &jointStateCallback);
 
 void setup() {
+  pinMode(2, OUTPUT);
+  digitalWrite(2, LOW);  // power on
+  
   servo1.attach(9);
   servo2.attach(8);
   servo3.attach(12);
@@ -71,6 +74,6 @@ void setup() {
 
 void loop() {
   nh.spinOnce();
-  nh.loginfo("nh.spinOnce()");
+  //nh.loginfo("nh.spinOnce()");
   delay(1);
 }

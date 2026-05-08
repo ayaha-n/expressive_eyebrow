@@ -19,8 +19,8 @@ float servo_now3 = 45;
 
 int delay_time = 1500;
 
-// サーボを指定された角度に移動させる関数
 void moveServo(int angle1, int angle2, int angle3) {
+  digitalWrite(2, LOW);
   servo1.write(angle1);
   servo2.write(angle2);
   servo3.write(angle3);
@@ -42,11 +42,11 @@ void delayAndMoveServo(int delay_time, int angle1, int angle2, int angle3) {
     servo_now2 += step_angle2;
     servo_now3 += step_angle3;
     moveServo((int)servo_now1, (int)servo_now2, (int)servo_now3);
-    delay(10);  // 10ミリ秒ごとに指令を送る
+    delay(10);  // send servo angle every 10 msec
+    digitalWrite(2, HIGH);
   }
 }
 
-// JointStateメッセージのコールバック関数
 void jointStateCallback(const sensor_msgs::JointState &msg) {
   nh.loginfo("jointStateCallback called");
 
@@ -64,12 +64,13 @@ void jointStateCallback(const sensor_msgs::JointState &msg) {
   nh.loginfo("jointStateCallback end");
 }
 
-// ROSサブスクライバの設定
-ros::Subscriber<sensor_msgs::JointState> sub("joint_states", &jointStateCallback);
+ros::Subscriber<sensor_msgs::JointState> sub("eye_brow/joint_states", &jointStateCallback);
 
-// setup()関数
 void setup() {
-  // サーボのピンに接続
+  pinMode(2, OUTPUT);
+  digitalWrite(2, HIGH);  // servo off.
+  
+  // connect to servo pin
   servo1.attach(9);
   servo2.attach(8);
   servo3.attach(12);
@@ -83,9 +84,8 @@ void setup() {
 
 }
 
-// loop()関数
 void loop() {
   nh.spinOnce();
-  delay(1);  // 1ミリ秒の遅延
+  delay(1);
 }
 
